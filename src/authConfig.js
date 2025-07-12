@@ -6,11 +6,20 @@ import { LogLevel } from '@azure/msal-browser';
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md 
  */
 
+ // Add this validation at the top of authConfig.js
+if (!process.env.REACT_APP_CLIENT_ID) {
+    throw new Error('REACT_APP_CLIENT_ID environment variable is required');
+}
+
+if (!process.env.REACT_APP_TENANT_ID) {
+    throw new Error('REACT_APP_TENANT_ID environment variable is required');
+}
+
  export const msalConfig = {
      auth: {
-         clientId: '6b4328eb-ec24-4546-ae28-ba3f29114db8', // This is the ONLY mandatory field that you need to supply.
-         authority: 'https://login.microsoftonline.com/ef1d4b1e-bd3c-4e1e-a8de-525e802c43d1', // Replace the placeholder with your tenant info
-         redirectUri: 'http://localhost:3000', // Points to window.location.origin. You must register this URI on Microsoft Entra admin center/App Registration.
+         clientId: process.env.REACT_APP_CLIENT_ID, // This is the ONLY mandatory field that you need to supply.
+         authority: `https://login.microsoftonline.com/${process.env.REACT_APP_TENANT_ID}`,
+         redirectUri: process.env.REACT_APP_REDIRECT_URI, // Points to window.location.origin. You must register this URI on Microsoft Entra admin center/App Registration.
          postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
          navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
      },

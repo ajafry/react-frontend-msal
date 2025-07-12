@@ -2,6 +2,16 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Environment Setup
+
+1. Copy `.env.example` to `.env.local`
+2. Fill in your Azure AD configuration values:
+   - `REACT_APP_CLIENT_ID`: Your Azure AD application client ID
+   - `REACT_APP_TENANT_ID`: Your Azure AD tenant ID
+   - `REACT_APP_REDIRECT_URI`: Your application redirect URI (default: http://localhost:3000)
+
+**Note**: Never commit `.env.local` or any file containing real Azure AD credentials to version control.
+
 ## Available Scripts
 
 In the project directory, you can run:
