@@ -1,9 +1,11 @@
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
-import { Navbar, Button } from 'react-bootstrap';
+import { Navbar, Button, Container, Nav, NavDropdown } from 'react-bootstrap';
 import { loginRequest } from '../authConfig';
+import '../styles/Navbar.css'; // Assuming you have a CSS file for custom styles
 
 export const NavigationBar = () => {
-    const { instance } = useMsal();
+    const { instance, accounts } = useMsal();
+    const account = accounts[0];
 
     const handleLoginRedirect = () => {
         instance.loginRedirect(loginRequest).catch((error) => console.log(error));
@@ -13,30 +15,52 @@ export const NavigationBar = () => {
         instance.logoutRedirect().catch((error) => console.log(error));
     };
 
-    /**
-     * Most applications will need to conditionally render certain components based on whether a user is signed in or not.
-     * msal-react provides 2 easy ways to do this. AuthenticatedTemplate and UnauthenticatedTemplate components will
-     * only render their children if a user is authenticated or unauthenticated, respectively.
-     */
+    const callHelloWorldApi = () => {
+        console.log('Calling Hello World API...');
+    };
+
     return (
-        <>
-            <Navbar bg="primary" variant="dark" className="navbarStyle">
-                <a className="navbar-brand" href="/">
-                    Microsoft identity platform
-                </a>
-                <AuthenticatedTemplate>
-                    <div className="collapse navbar-collapse justify-content-end">
-                        <Button variant="warning" onClick={handleLogoutRedirect}>
-                            Sign out
-                        </Button>
-                    </div>
-                </AuthenticatedTemplate>
-                <UnauthenticatedTemplate>
-                    <div className="collapse navbar-collapse justify-content-end">
-                        <Button onClick={handleLoginRedirect}>Sign in</Button>
-                    </div>
-                </UnauthenticatedTemplate>
-            </Navbar>
-        </>
+        <Navbar bg="primary" variant="dark" expand="lg" className="navbar-custom">
+            <Container>
+                <Navbar.Brand href="/" className="brand-custom">
+                    React SPA with MSAL Authentication
+                </Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="ms-auto">
+                        <AuthenticatedTemplate>
+                            <Nav.Link className="text-light me-3">
+                                Welcome, {account?.name?.split(' ')[0] || 'User'}!
+                            </Nav.Link>
+                            <NavDropdown 
+                                title="⚙️ Actions"
+                                id="actions-dropdown"
+                                align="end"
+                                className="actions-dropdown"
+                            >
+                                <NavDropdown.Header>API Calls</NavDropdown.Header>
+                                <NavDropdown.Item onClick={callHelloWorldApi}>
+                                    🌍 Hello World API
+                                </NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Header>Account</NavDropdown.Header>
+                                <NavDropdown.Item onClick={handleLogoutRedirect}>
+                                    🚪 Sign out
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                        </AuthenticatedTemplate>
+                        <UnauthenticatedTemplate>
+                            <Button 
+                                variant="outline-light" 
+                                onClick={handleLoginRedirect}
+                                className="nav-button"
+                            >
+                                🔐 Sign in
+                            </Button>
+                        </UnauthenticatedTemplate>
+                    </Nav>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
     );
 };
